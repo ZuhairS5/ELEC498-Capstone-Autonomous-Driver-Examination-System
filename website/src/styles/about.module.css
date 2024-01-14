@@ -1,0 +1,40 @@
+.section {
+    margin: 40px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 2px solid #000; /* Add a black border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  
+  /* Style for headings */
+  .section h2 {
+    color: #333; /* Dark color for contrast */
+    margin-bottom: 10px; /* Space between title and content */
+    text-align: center;
+  }
+  
+  /* Style for paragraphs */
+  .section p {
+    color: #666; /* Slightly lighter text for the body */
+    line-height: 1.6; /* Improved readability */
+  }
+  
+  /* Style for the list in the Key Features section */
+  .section ul {
+    list-style: none; /* Remove default list style */
+    padding: 0; /* Remove default padding */
+  }
+  
+  /* Style for list items */
+  .section li {
+    margin-bottom: 5px; /* Space between list items */
+    before: '• '; /* Adding a bullet-like symbol before each item */
+    color: #444; /* Dark color for list items */
+  }
+  /* .section:hover {
+    background-color: #f0f0f0; 
+    transform: scale(1.02); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer; 
+  } */

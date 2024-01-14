@@ -1,0 +1,27 @@
+.navButton {
+    background-color: #0066cc;
+    padding: 0.5em 1em;
+    margin: 0 1em;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    border: none;
+    outline: none;
+    font-size: 16px; /* Adjust the desired font size */
+    cursor: pointer; /* Add a pointer cursor to indicate interactivity */
+    text-decoration: none; /* No underline for the link */
+    color: white; /* White text color */
+    display: block; /* Make the link a block to fill the button */
+  }
+  
+  .navButton:hover {
+    background-color: #004080; /* Darker color on hover */
+  }
+  
+  .nav {
+    background-color: #0066cc; /* Background color for the navigation bar */
+    padding: 10px; /* Adjust padding as needed */
+    text-align: center; /* Center text within the navigation bar */
+    display: flex; /* Use flexbox to center buttons horizontally */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+  }
