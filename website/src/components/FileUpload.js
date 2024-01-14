@@ -7,7 +7,10 @@ const FileUpload = () => {
     console.log(acceptedFiles);
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    multiple: true, // Allow multiple files
+  });
 
   return (
     <div {...getRootProps()} style={{ border: '2px dashed #007bff', padding: '20px', textAlign: 'center' }}>

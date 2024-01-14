@@ -1,33 +1,20 @@
-.App {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-  }
-  
-  header {
-    background-color: #007bff;
-    color: white;
-    text-align: center;
-    padding: 1em 0;
-  }
-  
-  header h1 {
-    margin: 0;
-  }
-  
-  section {
-    padding: 1em 20px;
-  }
-  
-  section h2 {
-    color: #007bff;
-  }
-  
-  ul {
-    list-style: none;
-    padding-left: 0;
-  }
-  
-  li {
-    margin-bottom: 0.5em;
-  }
+
+.content {
+  text-align: center; /* Centering the content */
+  padding: 20px; /* Providing some padding around the content */
+}
+
+.title {
+  color: #333; /* Dark color for the title */
+  margin-top: 20px; /* Space above the title */
+  font-size: 24px; /* Larger font size for the title */
+}
+
+.description {
+  color: #666; /* Slightly lighter color for the description */
+  margin-top: 10px; /* Space above the description */
+  font-size: 16px; /* Comfortable reading size for the description */
+  max-width: 600px; /* Maximum width for better readability */
+  margin-left: auto; /* Aligning the text block to the center */
+  margin-right: auto;
+}
