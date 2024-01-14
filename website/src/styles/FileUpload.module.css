@@ -1,0 +1,49 @@
+
+.dropzone {
+    border: 2px dashed #007bff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    margin: 20px 0;
+  }
+  
+  .dropzone:hover {
+    background-color: #e9ecef;
+    border-color: #0056b3;
+  }
+  
+  .uploadedFilesList {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  .uploadedFileItem {
+    background-color: #e2e6ea;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #495057;
+    word-break: break-all; /* In case of very long file names */
+  }
+  
+  .uploadPrompt {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #343a40;
+  }
+  
+  .uploadedFilesTitle {
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+
+  .removeButton {
+    margin-left: 10px;
+    color: red;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
