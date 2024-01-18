@@ -63,7 +63,7 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, val_loader, schedul
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Lab 1 ELEC475 Training Function')
+    parser = argparse.ArgumentParser(description='Training Function')
     parser.add_argument('-z', type=int, default=8, help='Bottleneck size (default: 8)')
     parser.add_argument('-e', type=int, default=10, help='Number of epochs (default: 10)')
     parser.add_argument('-b', type=int, default=1024, help='Batch size (default: 1024)')
