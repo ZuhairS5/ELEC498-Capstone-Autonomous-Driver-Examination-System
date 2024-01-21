@@ -6,7 +6,7 @@ import torch.optim.adam
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.datasets import MNIST
-from model import autoencoderMLP4Layer
+from model import model
 
 
 def train(n_epochs, optimizer, model, loss_fn, train_loader, val_loader, scheduler, device, plot_file, save_file):
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     my_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    my_model = autoencoderMLP4Layer(N_bottleneck=arguments.z)
+    my_model = model(N_bottleneck=arguments.z)
 
     my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-3, weight_decay=1e-5)
 
