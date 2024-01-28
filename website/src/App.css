@@ -36,9 +36,12 @@
     transform: rotate(360deg);
   }
 }
+<<<<<<< HEAD
 
 .app-content {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
+=======
+>>>>>>> 50851e3aaa4792026c789721b507ff6e2c3ff0c3

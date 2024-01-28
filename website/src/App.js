@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Homepage from './MainPages/Homepage';
 import Footer from './components/Footer';
@@ -30,6 +31,19 @@ function App() {
       </div>
       <Footer/>
     </Router>
+=======
+
+import Homepage from './MainPages/Homepage';
+
+function App() {
+  return (
+    
+    <div className="App">
+      
+      
+      <Homepage/>
+    </div>
+>>>>>>> 50851e3aaa4792026c789721b507ff6e2c3ff0c3
   );
 }
 

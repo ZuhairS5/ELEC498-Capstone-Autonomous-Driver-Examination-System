@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styles from '../styles/FileUpload.module.css';
@@ -38,6 +39,23 @@ const FileUpload = () => {
           ))}
         </ul>
       </div>
+=======
+import React, { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+
+const FileUpload = () => {
+  const onDrop = useCallback(acceptedFiles => {
+    // Handle the files here
+    console.log(acceptedFiles);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
+  return (
+    <div {...getRootProps()} style={{ border: '2px dashed #007bff', padding: '20px', textAlign: 'center' }}>
+      <input {...getInputProps()} />
+      <p>Drag 'n' drop some files here, or click to select files</p>
+>>>>>>> 50851e3aaa4792026c789721b507ff6e2c3ff0c3
     </div>
   );
 }
