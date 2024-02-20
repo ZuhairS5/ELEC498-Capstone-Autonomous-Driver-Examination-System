@@ -24,7 +24,7 @@ function About() {
 
       <section className={styles.section}>
         <h2>How It Works</h2>
-        <p>The system operates using a blend of sophisticated hardware and software. It employs a three-camera setup to monitor the vehicle's surroundings and the driver's actions, along with an accelerometer to track the vehicle's speed. This data is analyzed in real-time by an advanced computer vision model, which then assesses the driver's ability to safely perform a lane change. The evaluation results are instantly sent to the driver's mobile device, offering immediate and precise feedback. This innovative approach ensures a fair and comprehensive assessment of driving skills, surpassing the capabilities of traditional human examiners.</p>
+        <p>The system operates using a blend of sophisticated hardware and software. It employs a four-camera setup to monitor the vehicle's surroundings and the driver's actions, along with an On-Board Diagnostics to track the vehicle's speed. This data is analyzed by an advanced computer vision model, which then assesses the driver's ability to safely perform a lane change. The evaluation results are then uploaded to this website, offering immediate and precise feedback. This innovative approach ensures a fair and comprehensive assessment of driving skills, surpassing the capabilities of traditional human examiners.</p>
       </section>
 
       <section className={styles.section}>

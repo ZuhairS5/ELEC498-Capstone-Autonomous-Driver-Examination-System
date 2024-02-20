@@ -3,41 +3,42 @@ import { useDropzone } from 'react-dropzone';
 import styles from '../styles/FileUpload.module.css';
 
 const FileUpload = () => {
-  const [fileNames, setFileNames] = useState([]);
+  const [file, setFile] = useState(null); // Change to hold a single file object
 
   const onDrop = useCallback(acceptedFiles => {
-    const newNames = acceptedFiles.map(file => ({
-      name: file.name,
-      id: file.lastModified
-    }));
-    setFileNames(prevNames => [...prevNames, ...newNames]);
+    // Since `multiple` is false, acceptedFiles[0] will always have the latest file
+    const newFile = acceptedFiles[0] ? {
+      name: acceptedFiles[0].name,
+      id: acceptedFiles[0].lastModified
+    } : null;
+    setFile(newFile); // Update the state to hold the new file
   }, []);
 
-  const removeFile = (fileId, event) => {
+  const removeFile = (event) => {
     event.stopPropagation();
-    setFileNames(fileNames.filter(file => file.id !== fileId));
+    setFile(null); // Clear the selected file
   };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    multiple: true,
+    multiple: false, // Ensure only one file is accepted
   });
 
   return (
     <div {...getRootProps()} className={styles.dropzone}>
       <input {...getInputProps()} />
       <p className={styles.uploadPrompt}>Click to select files</p>
-      <div>
-        {fileNames.length > 0 && <h3 className={styles.uploadedFilesTitle}>Uploaded Files:</h3>}
-        <ul className={styles.uploadedFilesList}>
-          {fileNames.map(file => (
+      {file && (
+        <div>
+          <h3 className={styles.uploadedFilesTitle}>Uploaded File:</h3>
+          <ul className={styles.uploadedFilesList}>
             <li key={file.id} className={styles.uploadedFileItem}>
               {file.name}
-              <button onClick={(event) => removeFile(file.id, event)} className={styles.removeButton}>X</button>
+              <button onClick={removeFile} className={styles.removeButton}>X</button>
             </li>
-          ))}
-        </ul>
-      </div>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
