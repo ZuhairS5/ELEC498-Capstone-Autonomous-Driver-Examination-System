@@ -28,7 +28,7 @@ def get_cameras(camera_tokens, cam_table):
 def get_camera_samples(camera, sample_table):
     samples = [entry['token']
                for entry in sample_table
-               if entry['calibrated_sensor_token'] == camera]
+               if (entry['calibrated_sensor_token'] == camera and entry['is_key_frame'])]
     return samples
 
 
