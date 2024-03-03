@@ -1,1 +1,5 @@
-data/
+model/data
+
+model/venv
+
+model/save_file.pth

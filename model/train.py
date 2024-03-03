@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     my_model = model()
 
-    my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-3, weight_decay=1e-5)
+    my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-4, weight_decay=1e-5)
 
     my_loss_fn = torch.nn.BCELoss()
 
