@@ -104,6 +104,6 @@ if __name__ == "__main__":
 
     my_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(my_optimizer)
 
-    train(n_epochs=1, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
+    train(n_epochs=40, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
           train_loader=train_data, scheduler=my_scheduler,
           device=my_device, save_file=False)
