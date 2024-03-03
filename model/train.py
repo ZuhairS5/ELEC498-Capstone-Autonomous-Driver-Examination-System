@@ -25,7 +25,6 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
         loss_val = 0.0
         for imgs, labels in train_loader:
             # train phase
-            imgs = imgs.view(4, 3, 1200, 1200)
             model.train()
             outputs = model(imgs)
             loss = loss_fn(outputs, labels)
