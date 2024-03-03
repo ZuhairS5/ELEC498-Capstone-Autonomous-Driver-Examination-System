@@ -14,8 +14,6 @@ def image_to_tensor(image_path):
     img = Image.open(image_path)
     convert_tensor = transforms.ToTensor()
     tensor = convert_tensor(img)
-    tensor = tensor.view(1, 3, 1200, 1200)
-    tensor = tensor.flatten(1)
     return tensor
 
 def get_cameras(camera_tokens, cam_table):
