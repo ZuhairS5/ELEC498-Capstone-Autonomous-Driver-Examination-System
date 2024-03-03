@@ -1,8 +1,6 @@
 import csv
-import torch
-from torchvision import transforms
-from PIL import Image
 from nuimages import NuImages
+import argparse
 
 cam_back_left_token = '972a846916414f828b9d2434e465e150'
 cam_back_right_token = '9a1de644815e46d1bb8faa1837f8a88b'
@@ -10,11 +8,8 @@ car_token = 'fd69059b62a3469fbaef25340c0eab7f'
 
 
 # returns list of all camera tokens matching desired type specified in camera_tokens
-def image_to_tensor(image_path):
-    img = Image.open(image_path)
-    convert_tensor = transforms.ToTensor()
-    tensor = convert_tensor(img)
-    return tensor
+
+
 
 def get_cameras(camera_tokens, cam_table):
     cameras = []
@@ -62,20 +57,30 @@ def write_csv(data, filename):
         # Write all dictionaries as rows in the CSV file
         writer.writerows(data)
 
-def generate_dataset_file():
-    nuim = NuImages(dataroot='../data/sets/nuimages', version='v1.0-mini', verbose=True, lazy=True)
-    # Gather all back left and back right cameras from dataset
+def get_nuim_tables(version, root):
+    print(f"creating nuim version:{version} from root:{root}")
+    nuim = NuImages(dataroot=root, version=version, verbose=True, lazy=True)
     cam_table = nuim.calibrated_sensor
+    sample_table = nuim.sample_data
+    annotations_table = nuim.object_ann
+    return nuim, cam_table, sample_table, annotations_table
+
+def generate_dataset_file(version, root):
+    #Load needed tables for nuim
+    nuim, cam_table, sample_table, annotations_table = get_nuim_tables(version, root)
+    # Gather all back left and back right cameras from dataset
     cameras = get_cameras([cam_back_left_token, cam_back_right_token], cam_table)
 
     # from each camera, collect their image frames
     samples = []
     for camera in cameras:
-        samples += get_camera_samples(camera, nuim.sample_data)
+        samples += get_camera_samples(camera, sample_table)
+
     #generate annotations_list
-    annotations = [get_sample_annotations(sample, nuim.object_ann) for sample in samples]
+    annotations = [get_sample_annotations(sample, annotations_table) for sample in samples]
     filtered_annotations = [select_category_annotations(sample_annotations, car_token, nuim)
                             for sample_annotations in annotations]
+
     #create data objects to be read by loader
     data_objects = []
     for sample, sample_annotations in zip(samples, filtered_annotations):
@@ -85,4 +90,15 @@ def generate_dataset_file():
                          'label': generate_sample_label(annotation_bboxes)
                          }
         data_objects.append(sample_object)
-    write_csv(data_objects, 'dataset.csv')
+
+    #write file
+    write_csv(data_objects, version + 'dataset.csv')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog='Dataset Creator',
+        description='Selects desired nuimage images and saves to csv')
+    parser.add_argument('-v', type=str, default='v1.0-mini', help='Nuimages version to search, default is v1.0-mini')
+    parser.add_argument('-p', type=str, default='../data/sets/nuimages', help='path to nuimages, default is ../data/sets/nuimages')
+    arguments = parser.parse_args()
+    generate_dataset_file(arguments.v,arguments.p)

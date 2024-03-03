@@ -1,22 +1,23 @@
-import data_helpers
 import torch
 import os
 from torch.utils.data import Dataset, DataLoader
 import torchvision
+from PIL import Image
+from torchvision import transforms
+
+
+def image_to_tensor(image_path):
+    transform = torchvision.transforms.Compose([
+        torchvision.transforms.Resize((1200, 1200))
+    ])
+    img = Image.open(image_path)
+    convert_tensor = transforms.ToTensor()
+    tensor = transform(convert_tensor(img))
+    return tensor
 
 
 class dataset(Dataset):
     def __init__(self, objects, root_dir):
-        """
-        Arguments:
-            csv_file (string): Path to the csv file with annotations.
-            root_dir (string): Directory with all the images.
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
-        """
-        self.transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize((1200, 1200))
-        ])
         self.objects = objects
         self.root_dir = root_dir
 
@@ -29,8 +30,7 @@ class dataset(Dataset):
 
         img_name = os.path.join(self.root_dir,
                                 self.objects[idx]["filename"])
-        image = data_helpers.image_to_tensor(img_name)
-        image = self.transform(image)
+        image = image_to_tensor(img_name)
         labels = self.objects[idx]["label"]
         sample = [image, labels]
 

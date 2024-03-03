@@ -1,20 +1,15 @@
 import argparse
 from datetime import datetime
-import numpy as np
 import matplotlib.pyplot as plt
 import torch.optim.adam
 from torch.utils.data import DataLoader
-from torchvision import transforms
-from torchvision.datasets import MNIST
 from model import model
-import image_processor
 import data_set
-import data_helpers
 import csv
 
-
+train_path = 'v1.0-traindataset.csv'
 def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, save_file):
-    print('training...')
+    print("begining train loop")
     model.train()
     losses_train = []
     losses_val = []
@@ -32,19 +27,20 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
             loss.backward()
             optimizer.step()
             loss_train += loss.item()
+
         scheduler.step(loss_train)
 
         losses_train += [loss_train / len(train_loader)]
         #losses_val += [loss_val / len(val_loader)]
-
+        torch.save(my_model.state_dict(), save_file)
        # print('{} Epoch {}, Training loss {}, Validation loss {}'.format(
        #     datetime.now(), epoch, loss_train / len(train_loader), loss_val / len(val_loader)))
 
         print('{} Epoch {}, Training loss {}'.format(datetime.now(), epoch, loss_train / len(train_loader)))
-        plt.plot(losses_train)
-        plt.xlabel('epoch')
-        plt.ylabel('loss')
-        plt.savefig("loss")
+    plt.plot(losses_train)
+    plt.xlabel('epoch')
+    plt.ylabel('loss')
+    plt.savefig("loss")
    # if plot_file is not None:
    #     plt.figure(2, figsize=(12, 7))
    #     plt.clf()
@@ -54,28 +50,21 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
    #     plt.ylabel('loss')
    #     plt.legend(loc=1)
    #     plt.savefig(plot_file)
-        torch.save(my_model.state_dict(), "save_file.pth")
-
 
 if __name__ == "__main__":
-    '''
+
     parser = argparse.ArgumentParser(description='Training Function')
-    parser.add_argument('-z', type=int, default=8, help='Bottleneck size (default: 8)')
+    parser.add_argument('-validate', type=bool, default=True, help="Run validation steps")
     parser.add_argument('-e', type=int, default=10, help='Number of epochs (default: 10)')
     parser.add_argument('-b', type=int, default=1024, help='Batch size (default: 1024)')
-    parser.add_argument('-s', type=str, default="MLP.8.pth",
-                        help='PyTorch model state save location name (default: "MLP.8.pth")')
-    parser.add_argument('-p', type=str, default="loss.MLP.8.png",
-                        help='PyTorch loss graph save location name (default: "loss.MLP.8.png")')
-
+    parser.add_argument('-s', type=str, default="capstone_model.pth",
+                        help='PyTorch model state save location name (default: "capstone_model.pth")')
+    parser.add_argument('-p', type=str, default="capstone_loss.png",
+                        help='PyTorch loss graph save location name (default: "capstone_loss.png")')
     arguments = parser.parse_args()
-    '''
-    batchsize = 4
-    # train_transform = transforms.Compose([transforms.ToTensor()])
-    # train_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])  # EX
-    #train_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(0, 1)])
+
     objects = []
-    with open('dataset.csv', 'r', newline='') as csvfile:
+    with open(train_path, 'r', newline='') as csvfile:
         csv_reader = csv.reader(csvfile)
         next(csv_reader, None) #skip headers
         for row in csv_reader:
@@ -91,7 +80,7 @@ if __name__ == "__main__":
     #                                                         generator=torch.Generator().manual_seed(1))
     # Splitting the training set into train and validation subsets
 
-    train_data = DataLoader(dataset, batch_size=batchsize, shuffle=True)
+    train_data = DataLoader(dataset, batch_size=arguments.b, shuffle=True)
 
 
     my_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -103,7 +92,6 @@ if __name__ == "__main__":
     my_loss_fn = torch.nn.BCELoss()
 
     my_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(my_optimizer)
-
-    train(n_epochs=40, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
-          train_loader=train_data, scheduler=my_scheduler,
-          device=my_device, save_file=False)
+    train(n_epochs=arguments.e, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
+      train_loader=train_data, scheduler=my_scheduler,
+      device=my_device, save_file=arguments.s)
