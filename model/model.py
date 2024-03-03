@@ -12,7 +12,7 @@ class model (nn.Module):
         self.fc3 = nn.Linear(10,2)
         self.relu = nn.ReLU()
         self.sig = nn.Sigmoid()
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
         # = torch.hub.load('pytorch/vision:v0.10.0', 'resnext50_32x4d', pretrained=True)
 
     def forward(self, x):

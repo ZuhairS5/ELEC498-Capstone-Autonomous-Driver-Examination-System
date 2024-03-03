@@ -42,7 +42,10 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
        #     datetime.now(), epoch, loss_train / len(train_loader), loss_val / len(val_loader)))
 
         print('{} Epoch {}, Training loss {}'.format(datetime.now(), epoch, loss_train / len(train_loader)))
-
+        plt.plot(losses_train)
+        plt.xlabel('epoch')
+        plt.ylabel('loss')
+        plt.savefig("loss")
    # if plot_file is not None:
    #     plt.figure(2, figsize=(12, 7))
    #     plt.clf()
@@ -52,8 +55,6 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
    #     plt.ylabel('loss')
    #     plt.legend(loc=1)
    #     plt.savefig(plot_file)
-
-    if save_file:
         torch.save(my_model.state_dict(), save_file)
 
 
@@ -104,6 +105,6 @@ if __name__ == "__main__":
 
     my_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(my_optimizer)
 
-    train(n_epochs=40, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
+    train(n_epochs=1, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
           train_loader=train_data, scheduler=my_scheduler,
           device=my_device, save_file=False)
