@@ -13,7 +13,9 @@ car_token = 'fd69059b62a3469fbaef25340c0eab7f'
 def image_to_tensor(image_path):
     img = Image.open(image_path)
     convert_tensor = transforms.ToTensor()
-    tensor = torch.flatten(convert_tensor(img), 1)
+    tensor = convert_tensor(img)
+    tensor = tensor.view(1, 3, 1200, 1200)
+    tensor = tensor.flatten(1)
     return tensor
 
 def get_cameras(camera_tokens, cam_table):
