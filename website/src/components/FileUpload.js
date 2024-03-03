@@ -2,26 +2,60 @@ import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styles from '../styles/FileUpload.module.css';
 
-const FileUpload = () => {
-  const [file, setFile] = useState(null); // Change to hold a single file object
+const FileUpload = ({ onValidFile }) => {
+  const [file, setFile] = useState(null);
 
   const onDrop = useCallback(acceptedFiles => {
-    // Since `multiple` is false, acceptedFiles[0] will always have the latest file
-    const newFile = acceptedFiles[0] ? {
-      name: acceptedFiles[0].name,
-      id: acceptedFiles[0].lastModified
-    } : null;
-    setFile(newFile); // Update the state to hold the new file
-  }, []);
+    const file = acceptedFiles[0];
+    if (!file) {
+      alert('No file selected.');
+      return;
+    }
+
+    if (file.type !== 'video/mp4') {
+      alert('File is not an MP4 video.');
+      return;
+    }
+
+    // Attempt to check video duration
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    
+    video.onloadedmetadata = function() {
+      window.URL.revokeObjectURL(video.src);
+      const duration = video.duration;
+      if (duration > 180) { // 180 seconds = 3 minutes
+        alert('Video is longer than 3 minutes.');
+        if (typeof onValidFile === 'function') {
+          onValidFile(null);
+        }
+      } else {
+        // Video is valid
+        const newFile = {
+          name: file.name,
+          id: file.lastModified,
+        };
+        setFile(newFile);
+        if (typeof onValidFile === 'function') {
+          onValidFile(newFile);
+        }
+      }
+    };
+
+    video.src = URL.createObjectURL(file);
+  }, [onValidFile]);
 
   const removeFile = (event) => {
     event.stopPropagation();
-    setFile(null); // Clear the selected file
+    setFile(null);
+    if (typeof onValidFile === 'function') {
+      onValidFile(null);
+    }
   };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    multiple: false, // Ensure only one file is accepted
+    multiple: false,
   });
 
   return (
@@ -41,6 +75,6 @@ const FileUpload = () => {
       )}
     </div>
   );
-}
+};
 
 export default FileUpload;
