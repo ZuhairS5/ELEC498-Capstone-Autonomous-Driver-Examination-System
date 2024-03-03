@@ -54,7 +54,7 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
    #     plt.ylabel('loss')
    #     plt.legend(loc=1)
    #     plt.savefig(plot_file)
-        torch.save(my_model.state_dict(), save_file)
+        torch.save(my_model.state_dict(), "save_file.pth")
 
 
 if __name__ == "__main__":

@@ -31,7 +31,6 @@ class dataset(Dataset):
                                 self.objects[idx]["filename"])
         image = data_helpers.image_to_tensor(img_name)
         image = self.transform(image)
-        print(image.size())
         labels = self.objects[idx]["label"]
         sample = [image, labels]
 
