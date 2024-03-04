@@ -1,10 +1,13 @@
 runtime: nodejs18 # Specify your Node.js version here
+vm: true
 env: standard
 instance_class: F1  # F1 is the smallest instance class, within the free tier
 
 automatic_scaling:
   max_instances: 1  # Optionally limit instances to manage cost
+  min_idle_instances: automatic
 
 handlers:
 - url: /.*
   script: auto
+  secure: always
