@@ -18,7 +18,10 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
         print('epoch', epoch)
         loss_train = 0.0
         loss_val = 0.0
+        i=0
         for imgs, labels in train_loader:
+            i+=1
+            print("batch #" + i)
             # train phase
             model.train()
             outputs = model(imgs)
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Training Function')
     parser.add_argument('-validate', type=bool, default=True, help="Run validation steps")
     parser.add_argument('-e', type=int, default=10, help='Number of epochs (default: 10)')
-    parser.add_argument('-b', type=int, default=1024, help='Batch size (default: 1024)')
+    parser.add_argument('-b', type=int, default=4, help='Batch size (default: 1024)')
     parser.add_argument('-s', type=str, default="capstone_model.pth",
                         help='PyTorch model state save location name (default: "capstone_model.pth")')
     parser.add_argument('-p', type=str, default="capstone_loss.png",
