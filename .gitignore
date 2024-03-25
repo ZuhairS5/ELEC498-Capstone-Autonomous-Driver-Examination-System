@@ -7,3 +7,5 @@ website/backend/venv
 website/backend/elec490-63e2445e079b.json
 
 website/backend/ffmpeg
+
+model/capstone_model.pth
