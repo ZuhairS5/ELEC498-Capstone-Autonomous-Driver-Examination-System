@@ -29,12 +29,12 @@ storage_client = storage.Client()
 #--------------------------------------------------------------------------------------------------
 #FOR PROD
 
-# CORS(app, supports_credentials=True, origins= 'https://autonomous-driver-system.netlify.app')
-# REACT_APP_FRONTEND_URL = "https://autonomous-driver-system.netlify.app/"
+CORS(app, supports_credentials=True, origins= 'https://autonomous-driver-system.netlify.app')
+REACT_APP_FRONTEND_URL = "https://autonomous-driver-system.netlify.app/"
 
 #FOR LOCAL
-CORS(app, supports_credentials=True, origins='http://localhost:3000')
-REACT_APP_FRONTEND_URL = "http://localhost:3000"
+# CORS(app, supports_credentials=True, origins='http://localhost:3000')
+# REACT_APP_FRONTEND_URL = "http://localhost:3000"
 #---------------------------------------------------------------------------------------------------
 
 # Get the absolute path of the script
