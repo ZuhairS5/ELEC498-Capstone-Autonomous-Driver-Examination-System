@@ -11,14 +11,8 @@ import subprocess
 import tempfile
 import shutil
 import logging
+import cv2
 
-logging.info("This is an information message")
-
-def download_ffmpeg_binary(ffmpeg_executable):
-    ffmpeg_local_binary = 'ffmpeg'  # This is the name of the FFmpeg binary in the current directory
-    if not os.path.isfile(ffmpeg_executable):
-        shutil.copyfile(ffmpeg_local_binary, ffmpeg_executable)
-        os.chmod(ffmpeg_executable, 0o755)  # Make it executable
 
 
 app = Flask(__name__)
@@ -91,16 +85,15 @@ def get_signed_url():
 #----------------------------------------------------------------------------------------
 
 def process_video(data, context):
-    """Triggered by a change to a Cloud Storage bucket."""
     storage_client = storage.Client()
-    bucket_name = 'elec490-processing-bucket'  # Your bucket name
+    bucket_name = 'elec490-processing-bucket'  # bucket name
     file_name = data['name']
     logging.info(f"Function triggered by file: {file_name}")
 
     # Define the local and destination paths
     tmp_dir = tempfile.gettempdir()
     download_path = os.path.join(tmp_dir, os.path.basename(file_name))
-    upload_session_id = file_name.split('/')[1]  # Assumes file_name includes a unique session ID
+    upload_session_id = file_name.split('/')[1]  
     frames_path = f"uploads/{upload_session_id}/pictures/"
     logging.info(f"Frames will be uploaded to: {frames_path}")
 
@@ -109,31 +102,28 @@ def process_video(data, context):
     blob.download_to_filename(download_path)
     logging.info(f"Video downloaded to temporary storage: {download_path}")
 
-    # Ensure FFmpeg is available
-    ffmpeg_executable = os.path.join(tmp_dir, 'ffmpeg')
-    download_ffmpeg_binary(ffmpeg_executable)
+    # Process the video and generate frames using OpenCV
+    vidcap = cv2.VideoCapture(download_path)
+    success, image = vidcap.read()
+    count = 0
 
-    # Process the video and generate frames using FFmpeg
-    output_template = os.path.join(tmp_dir, "frame-%04d.png")  # Adjust the output format as needed
-    try:
-        subprocess.run([ffmpeg_executable, '-i', download_path, output_template], check=True)
-        logging.info(f"Frames generated successfully from {download_path}")
-    except subprocess.CalledProcessError as e:
-        print(f"FFmpeg Error: {e}")
-        return
+    while success:
+        frame_file_path = os.path.join(tmp_dir, f"frame-{count:04d}.png")
+        cv2.imwrite(frame_file_path, image)     # save frame as PNG file
+        success, image = vidcap.read()
+        logging.info(f"Frame {count} processed.")
 
-     # Upload the frames back to GCS
-    for frame_file in os.listdir(tmp_dir):
-        if frame_file.startswith("frame-") and frame_file.endswith(".png"):
-            frame_blob = bucket.blob(f"{frames_path}{frame_file}")
-            try:
-                frame_blob.upload_from_filename(os.path.join(tmp_dir, frame_file))
-                logging.info(f"Frame {frame_file} uploaded successfully.")
-            except Exception as e:
-                logging.error(f"Failed to upload frame {frame_file}: {e}")
-            finally:
-                # Ensure the frame file is deleted even if the upload fails
-                os.remove(os.path.join(tmp_dir, frame_file))
+        # Upload the frame back to GCS
+        frame_blob = bucket.blob(f"{frames_path}frame-{count:04d}.png")
+        try:
+            frame_blob.upload_from_filename(frame_file_path)
+            logging.info(f"Frame {count:04d}.png uploaded successfully.")
+        except Exception as e:
+            logging.error(f"Failed to upload frame {count:04d}.png: {e}")
+        finally:
+            os.remove(frame_file_path)  # Ensure the frame file is deleted even if the upload fails
+
+        count += 1
 
 if __name__ == '__main__':
     app.run(debug=True)
