@@ -86,7 +86,7 @@ def get_signed_url():
 
 def process_video(data, context):
     storage_client = storage.Client()
-    bucket_name = 'elec490-processing-bucket'  # bucket name
+    bucket_name = 'elec490-processing-bucket'  
     file_name = data['name']
     logging.info(f"Function triggered by file: {file_name}")
 
