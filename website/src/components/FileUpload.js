@@ -8,42 +8,34 @@ const FileUpload = ({ onValidFile }) => {
   const onDrop = useCallback(acceptedFiles => {
     const file = acceptedFiles[0];
     if (!file) {
-      alert('No file selected.');
-      return;
+        alert('No file selected.');
+        return;
     }
 
     if (file.type !== 'video/mp4') {
-      alert('File is not an MP4 video.');
-      return;
+        alert('File is not an MP4 video.');
+        return;
     }
 
-    // Attempt to check video duration
+    // Check video duration, then pass the actual file if valid
     const video = document.createElement('video');
     video.preload = 'metadata';
-    
+
     video.onloadedmetadata = function() {
-      window.URL.revokeObjectURL(video.src);
-      const duration = video.duration;
-      if (duration > 180) { // 180 seconds = 3 minutes
-        alert('Video is longer than 3 minutes.');
-        if (typeof onValidFile === 'function') {
-          onValidFile(null);
+        window.URL.revokeObjectURL(video.src);
+        const duration = video.duration;
+        if (duration > 180) { // 180 seconds = 3 minutes
+            alert('Video is longer than 3 minutes.');
+        } else {
+            setFile(file); // Set the actual file
+            if (typeof onValidFile === 'function') {
+                onValidFile(file); // Pass the actual file
+            }
         }
-      } else {
-        // Video is valid
-        const newFile = {
-          name: file.name,
-          id: file.lastModified,
-        };
-        setFile(newFile);
-        if (typeof onValidFile === 'function') {
-          onValidFile(newFile);
-        }
-      }
     };
 
     video.src = URL.createObjectURL(file);
-  }, [onValidFile]);
+}, [onValidFile]);
 
   const removeFile = (event) => {
     event.stopPropagation();

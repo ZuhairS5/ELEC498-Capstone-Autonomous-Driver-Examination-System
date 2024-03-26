@@ -35,7 +35,8 @@ function Homepage() {
       if (!uploadResponse.ok) {
         throw new Error(`Failed to upload file: ${file.name}`);
       }
-  
+      console.log("Uploading file:", file, "Size:", file.size);
+      
       console.log(`File uploaded successfully: ${file.name}`);
     } catch (error) {
       console.error(`Error uploading file: ${file.name}`, error);
