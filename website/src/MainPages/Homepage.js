@@ -14,8 +14,7 @@ function Homepage() {
     dashboard: null,
   });
   const [password, setPassword] = useState('');
-  const [feedbackMessage, setFeedbackMessage] = useState({ message: '', isError: false });
-
+  
 
   const updateFileState = (fileCategory, fileData) => {
     setFiles(prevFiles => ({
