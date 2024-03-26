@@ -14,12 +14,63 @@ function Homepage() {
     dashboard: null,
   });
   const [password, setPassword] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState({ message: '', isError: false });
+
 
   const updateFileState = (fileCategory, fileData) => {
     setFiles(prevFiles => ({
       ...prevFiles,
       [fileCategory]: fileData,
     }));
+  };
+  const uploadFileToBucket = async (signedUrl, file) => {
+    try {
+      const uploadResponse = await fetch(signedUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+        body: file, // The file to upload
+      });
+  
+      if (!uploadResponse.ok) {
+        throw new Error(`Failed to upload file: ${file.name}`);
+      }
+  
+      console.log(`File uploaded successfully: ${file.name}`);
+    } catch (error) {
+      console.error(`Error uploading file: ${file.name}`, error);
+    }
+  };
+  const uploadFiles = async () => {
+    const fileKeys = ['front', 'leftBack', 'rightBack', 'dashboard']; // Keys for your files
+  
+    for (const key of fileKeys) {
+      const file = files[key];
+      if (!file) continue; // Skip if no file is selected
+  
+      try {
+        // Request a signed URL from your Flask backend
+        const response = await fetch('http://127.0.0.1:5000/api/getSignedUrl', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ filename: file.name }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to get a signed URL');
+        }
+  
+        const { signedUrl } = await response.json();
+  
+        // Upload the file using the signed URL
+        await uploadFileToBucket(signedUrl, file);
+      } catch (error) {
+        console.error('Error in uploading files:', error);
+      }
+    }
   };
 
   const handleStartProcess = async () => {
@@ -41,9 +92,12 @@ function Homepage() {
       }
   
       const data = await response.json();
+      alert('Success: Password is correct.');
       console.log('Success:', data);
+      await uploadFiles();
       // Handle success response, such as displaying results or next steps to the user
     } catch (error) {
+      alert('Error: Incorrect password or network issue.');
       console.error('Error:', error);
       // Handle errors, such as displaying a notification to the user
     }
@@ -92,6 +146,7 @@ function Homepage() {
         >
           Start Process
         </button>
+        
       </div>
     </div>
   );
