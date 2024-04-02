@@ -15,3 +15,5 @@ packaging==23.2
 requests==2.31.0
 urllib3==2.2.1
 Werkzeug==3.0.1
+opencv-python-headless>=4.5
+google-cloud-storage

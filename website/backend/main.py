@@ -12,6 +12,7 @@ import tempfile
 import shutil
 import logging
 import cv2
+import uuid
 
 
 
@@ -87,15 +88,21 @@ def get_signed_url():
 
 def process_video(data, context):
     storage_client = storage.Client()
-    bucket_name = 'elec490-processing-bucket'  
+    bucket_name = 'elec490-processing-bucket'
     file_name = data['name']
     logging.info(f"Function triggered by file: {file_name}")
 
-    # Define the local and destination paths
+    # Ensure these directories exist or handle accordingly
     tmp_dir = tempfile.gettempdir()
     download_path = os.path.join(tmp_dir, os.path.basename(file_name))
-    upload_session_id = file_name.split('/')[1]  
-    frames_path = f"uploads/{upload_session_id}/pictures/"
+
+    # Extract the session ID and video name
+    path_parts = file_name.split('/')
+    upload_session_id = path_parts[1]
+    video_name = path_parts[-1].split('.')[0]  # Extracting video name without extension
+
+    # Construct the frames path using the session ID and video name
+    frames_path = f"uploads/{upload_session_id}/{video_name}/frames/"
     logging.info(f"Frames will be uploaded to: {frames_path}")
 
     bucket = storage_client.bucket(bucket_name)
@@ -109,8 +116,8 @@ def process_video(data, context):
     count = 0
 
     while success:
-        frame_file_path = os.path.join(tmp_dir, f"frame-{count:04d}.png")
-        cv2.imwrite(frame_file_path, image)     # save frame as PNG file
+        frame_file_path = os.path.join(tmp_dir, f"{video_name}-frame-{count:04d}.png")
+        cv2.imwrite(frame_file_path, image)  # Save frame as PNG file
         success, image = vidcap.read()
         logging.info(f"Frame {count} processed.")
 
@@ -118,13 +125,15 @@ def process_video(data, context):
         frame_blob = bucket.blob(f"{frames_path}frame-{count:04d}.png")
         try:
             frame_blob.upload_from_filename(frame_file_path)
-            logging.info(f"Frame {count:04d}.png uploaded successfully.")
+            logging.info(f"Frame {count:04d}.png uploaded successfully to {frames_path}")
         except Exception as e:
-            logging.error(f"Failed to upload frame {count:04d}.png: {e}")
+            logging.error(f"Failed to upload frame {count:04d}.png to {frames_path}: {e}")
         finally:
             os.remove(frame_file_path)  # Ensure the frame file is deleted even if the upload fails
 
         count += 1
 
+
+        
 if __name__ == '__main__':
     app.run(debug=True)
