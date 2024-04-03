@@ -1,13 +1,16 @@
 import argparse
 from datetime import datetime
+from os import truncate
 import matplotlib.pyplot as plt
+from torch import _functional_assert_async
 import torch.optim.adam
 from torch.utils.data import DataLoader
 from model import model
 import data_set
 import csv
+from torchsummary import summary
 
-train_path = 'v1.0-traindataset.csv'
+train_path = 'v1.0-minidataset.csv'
 def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, save_file):
     print("begining train loop")
     model.train()
@@ -20,11 +23,28 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
         loss_val = 0.0
         i=0
         for imgs, labels in train_loader:
+            #invalid = truncate
+            #for label in labels:
+            #  if label == [1,0]:
+            #    invalid = False
+            #if invalid:
+            #  continue
             i+=1
-            print("batch #" + i)
+            print(f"batch #{i} of {len(train_loader)}")
             # train phase
+            imgs = imgs.to(my_device)
+            print(imgs)
+            print(imgs.size())
+            labels = labels.to(my_device)
             model.train()
             outputs = model(imgs)
+            print(outputs)
+            print("hello")
+            if i %100 ==0:
+              print(labels)
+              print(outputs)
+              print(loss_train)
+            labels = torch.flatten(labels, 1)
             loss = loss_fn(outputs, labels)
             optimizer.zero_grad()
             loss.backward()
@@ -72,7 +92,7 @@ if __name__ == "__main__":
         next(csv_reader, None) #skip headers
         for row in csv_reader:
             object = {"filename": row[0], "label": row[2]}
-            if object["label"]:
+            if object["label"] == "True":
                 object["label"] = torch.Tensor([0,1])
             else:
                 object["label"] = torch.Tensor([1, 0])
@@ -86,11 +106,12 @@ if __name__ == "__main__":
     train_data = DataLoader(dataset, batch_size=arguments.b, shuffle=True)
 
 
-    my_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    my_device = torch.device("cpu")
 
     my_model = model()
+    my_model.to(my_device)
 
-    my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-4, weight_decay=1e-5)
+    my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-5, weight_decay=1e-2)
 
     my_loss_fn = torch.nn.BCELoss()
 

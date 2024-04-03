@@ -11,8 +11,12 @@ def image_to_tensor(image_path):
         torchvision.transforms.Resize((1200, 1200))
     ])
     img = Image.open(image_path)
-    convert_tensor = transforms.ToTensor()
-    tensor = transform(convert_tensor(img))
+    #converts PIL image to Tensor
+    convert_tensor = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Resize((640, 640))
+        ])
+    tensor = convert_tensor(img)
     return tensor
 
 
@@ -31,7 +35,7 @@ class dataset(Dataset):
         img_name = os.path.join(self.root_dir,
                                 self.objects[idx]["filename"])
         image = image_to_tensor(img_name)
+
         labels = self.objects[idx]["label"]
         sample = [image, labels]
-
         return sample
