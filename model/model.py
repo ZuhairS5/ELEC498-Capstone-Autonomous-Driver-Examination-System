@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torchvision
+import pandas as pd
 
 class model (nn.Module):
     def __init__(self):
@@ -10,11 +11,21 @@ class model (nn.Module):
         self.fc2 = nn.Linear(10, 2)
         self.relu = nn.ReLU()
         self.sig = nn.Sigmoid()
-        self.softmax = nn.Softmax(dim=0)
+        self.softmax = nn.Softmax(dim=1)
         # = torch.hub.load('pytorch/vision:v0.10.0', 'resnext50_32x4d', pretrained=True)
 
     def forward(self, x):
         x = self.yolo(x)
+        print("Yolo Out")
+        print(len(x))
+        for y in range(len(x)):
+            print(len(x[y]))
+        print(x[0].shape)
+        print(x[1].shape)
+        print(x[2].shape)
+        print("-------------")
+        #print(x[0])
+        #print(x[1])
         x = torch.flatten(x[0], 1)
         x = self.fc1(x)
         x = self.relu(x)

@@ -33,13 +33,9 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
             print(f"batch #{i} of {len(train_loader)}")
             # train phase
             imgs = imgs.to(my_device)
-            print(imgs)
-            print(imgs.size())
             labels = labels.to(my_device)
             model.train()
             outputs = model(imgs)
-            print(outputs)
-            print("hello")
             if i %100 ==0:
               print(labels)
               print(outputs)
