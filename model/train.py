@@ -10,8 +10,8 @@ import data_set
 import csv
 from torchsummary import summary
 
-train_path = 'v1.0-minidataset.csv'
-def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, save_file):
+train_path = 'v1.0-traindataset.csv'
+def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, save_file, yolo):
     print("begining train loop")
     model.train()
     losses_train = []
@@ -22,20 +22,17 @@ def train(n_epochs, optimizer, model, loss_fn, train_loader, scheduler, device, 
         loss_train = 0.0
         loss_val = 0.0
         i=0
+        model.train()
         for imgs, labels in train_loader:
-            #invalid = truncate
-            #for label in labels:
-            #  if label == [1,0]:
-            #    invalid = False
-            #if invalid:
-            #  continue
             i+=1
-            print(f"batch #{i} of {len(train_loader)}")
-            # train phase
+            yolo = yolo.to(my_device)
             imgs = imgs.to(my_device)
+            print(f"batch #{i} of {len(train_loader)}")
+            y_outs = yolo(imgs)[0]
+            # train phase
+            y_outs = y_outs.to(my_device)
             labels = labels.to(my_device)
-            model.train()
-            outputs = model(imgs)
+            outputs = model(y_outs)
             if i %100 ==0:
               print(labels)
               print(outputs)
@@ -102,16 +99,18 @@ if __name__ == "__main__":
     train_data = DataLoader(dataset, batch_size=arguments.b, shuffle=True)
 
 
-    my_device = torch.device("cpu")
+    my_device = torch.device("cuda")
 
     my_model = model()
+    my_yolo = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True, classes=1)
     my_model.to(my_device)
 
-    my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-5, weight_decay=1e-2)
+    my_optimizer = torch.optim.Adam(my_model.parameters(), lr=1e-4)
 
     my_loss_fn = torch.nn.BCELoss()
 
-    my_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(my_optimizer)
+
+    my_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(my_optimizer, patience = 2, threshold = 1e-2)
     train(n_epochs=arguments.e, optimizer=my_optimizer, model=my_model, loss_fn=my_loss_fn,
       train_loader=train_data, scheduler=my_scheduler,
-      device=my_device, save_file=arguments.s)
+      device=my_device, save_file=arguments.s, yolo = my_yolo)

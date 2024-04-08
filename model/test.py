@@ -14,6 +14,7 @@ def test(test_loader, model, loss_fn):
     for images, labels in test_loader:
         loss_test = 0.0
         output = model(images)
+        print(output)
         loss = loss_fn(output, labels)
         loss_test += loss.item
         losses_test += [loss_test/len(test_loader)]
@@ -27,7 +28,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Training Function')
     parser.add_argument('-b', type=int, default=1024, help='Batch size (default: 1024)')
-    parser.add_argument('-s', type =str, default = 'capstone_model.pth')
+    parser.add_argument('-s', type =str, default = 'capstone_model-3.pth')
     arguments = parser.parse_args()
 
     objects = []
@@ -44,9 +45,9 @@ if __name__ == "__main__":
 
     dataset = data_set.dataset(objects, "./data/")
     test_data = DataLoader(dataset, batch_size=arguments.b, shuffle=True)
-    my_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    my_device = torch.device("cpu")
     my_model = model()
-    my_model.load_state_dict(torch.load(arguments.s))
+    my_model.load_state_dict(torch.load(arguments.s, map_location=torch.device('cpu')))
     my_model.eval()
     my_loss_fn = torch.nn.BCELoss()
     test(test_data, my_model, my_loss_fn)
